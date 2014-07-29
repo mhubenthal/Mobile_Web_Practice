@@ -1,18 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html class="ui-mobile">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Single Page</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/[version]/jquery.mobile-1.4.3.min.css">
+    <title>Mobile Tech Challenge #1</title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css">
+    <link rel="stylesheet" href="css/styles.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/[version]/jquery.mobile-1.4.3.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
   </head>
   <body>
-    <div data-role="page">
-      <div data-role="header"></div>
-      <div role="main" class="ui-content"></div>
-      <div data-role="footer"></div> 
-    </div>  
+
+    <!-- Start of first page -->
+    <div data-role="page" id="home">
+      <div data-role="header" style="overflow:hidden;">
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#home" data-icon="home">Home</a></li>
+            </ul>
+        </div><!-- /navbar -->
+        <h1>HELLO WORLD.</h1>
+      </div><!-- /header -->
+      
+      <div role="main" class="ui-content">
+
+          <form class="app-activity">
+            <input type="button" data-icon="bullets" value="Application activity" onclick="window.location.href='#activity'">
+          </form>
+
+      </div><!-- /content -->
+      
+      <div data-role="footer" style="width:100%; position:absolute; bottom:0px;">
+		    <h4></h4>
+      </div><!-- /footer -->
+    </div><!-- /page -->
+
+    <!-- Start of second page -->
+    <div data-role="page" id="activity">
+      <div data-role="header" style="overflow:hidden;">
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#home" data-icon="home">Home</a></li>
+            </ul>
+        </div><!-- /navbar -->
+        <h1>Application activity:</h1>
+      </div><!-- /header -->
+      
+      <div role="main" class="ui-content">
+		    
+      </div><!-- /content -->
+      
+      <div data-role="footer" style="width:100%; position:absolute; bottom:0px;">
+		    <h4></h4>
+      </div><!-- /footer -->
+    </div><!-- /page -->
   </body>
-</html>
+</html
