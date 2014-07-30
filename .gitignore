@@ -2,7 +2,7 @@
 *.DS_Store
 
 ## Ignore Grunt and Node
-/build/**
+**/build/**
 Gruntfile.js
-/node_modules/**
+**/node_modules/**
 package.json
