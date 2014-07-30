@@ -5,54 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mobile Tech Challenge #1</title>
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.min.css">
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
   </head>
   <body>
-
     <!-- Start of first page -->
     <div data-role="page" id="home">
-      <div data-role="header" style="overflow:hidden;">
-        <div data-role="navbar">
-            <ul>
-                <li><a href="#home" data-icon="home">Home</a></li>
-            </ul>
-        </div><!-- /navbar -->
-        <h1>HELLO WORLD.</h1>
-      </div><!-- /header -->
       
-      <div role="main" class="ui-content">
-
+      <!-- /header -->
+      <div data-role="header" style="overflow:hidden;">
+        <h1>HELLO WORLD.</h1>
+      </div>
+      
+      <!-- /content -->
+      <div role="main" class="home-content">
           <form class="app-activity">
             <input type="button" data-icon="bullets" value="Application activity" onclick="window.location.href='#activity'">
           </form>
-
-      </div><!-- /content -->
-      
+      </div>
+        
+      <!-- /footer -->
       <div data-role="footer" style="width:100%; position:absolute; bottom:0px;">
 		    <h4></h4>
-      </div><!-- /footer -->
-    </div><!-- /page -->
+      </div>
+    </div><!-- /end first page -->
 
     <!-- Start of second page -->
     <div data-role="page" id="activity">
+      
+      <!-- /header -->
       <div data-role="header" style="overflow:hidden;">
+        <!-- /navbar -->
         <div data-role="navbar">
             <ul>
                 <li><a href="#home" data-icon="home">Home</a></li>
             </ul>
-        </div><!-- /navbar -->
-        <h1>Application activity:</h1>
-      </div><!-- /header -->
+        </div>
+      </div>
       
-      <div role="main" class="ui-content">
-		    
-      </div><!-- /content -->
+      <!-- /content -->
+      <div role="main" class="activity-content">
+		    <h2>Application activity:</h2>
+        <p id="userSiteViews"></p>
+        <ol id="userSiteVisits" data-role="listview"></ol>
+        
+        <!-- Store user info in localStorage -->
+        <script type="text/javascript">
+          //Center the activity button vertically
+          function centerButton(){
+            var toppos=($(window).height()/2) - ($(".app-activity").height()/2);
+            var leftpos=($(window).width()/2) - ($(".app-activity").width()/2);
+            $(".app-activity").css("top", toppos).css("left",leftpos);
+          }
+          $(document).ready(centerButton);
+          $(window).resize(centerButton);
+          //Update user stats when activity list element has loaded
+          $("#activityRecord").load(updateUserStats());
+          function updateUserStats(){
+            var siteViews = "Sorry, your browser does not support local storage.";
+            var siteVisits;
+            // User has been here before, look at localStorage
+            if(localStorage.getItem('user')){
+              var user = JSON.parse(localStorage.getItem('user'));
+              // Increment number of site views
+              user.views = user.views + 1;
+              // Add date item to visits array
+              var today = new Date();
+              var todaysTime = today.toLocaleTimeString();
+              var todaysDate = today.toLocaleDateString();
+              var today = todaysTime + " " + todaysDate;
+              user.visits.push(today);
+              localStorage.setItem('user', JSON.stringify(user));
+              siteViews = "You have used this application " + user.views + " times.";
+              siteVisits = user.visits;
+            }
+            // New user, set up localStorage
+            if(localStorage && !localStorage.getItem('user')){
+              // Set up new user with some preloaded values
+              //   for this first visit.
+              var user = {};
+              user.views = 1;
+              user.locale = '';
+              user.visits = [];
+              var today = new Date();
+              var todaysTime = today.toLocaleTimeString();
+              var todaysDate = today.toLocaleDateString();
+              var today = todaysTime + " " + todaysDate;
+              user.visits.push(today);
+              localStorage.setItem('user', JSON.stringify(user));
+              siteViews = "You have used this application once.";
+              siteVisits = user.visits;
+            }
+            console.log('edit html');
+            $("#userSiteViews").append(siteViews);
+            $.each(siteVisits, function(index,value){
+              $("#userSiteVisits").append("<li>"+value+"</li>");
+            });
+          }
+        </script>
+      </div>
       
-      <div data-role="footer" style="width:100%; position:absolute; bottom:0px;">
+      <!-- /footer -->
+      <div data-role="footer">
 		    <h4></h4>
-      </div><!-- /footer -->
-    </div><!-- /page -->
+      </div>
+    </div><!-- /end of second page -->
   </body>
 </html
