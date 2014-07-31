@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="ui-mobile">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile Tech Challenge #2 -- USGS Earthquake Data</title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+    <script type="text/javascript" src="js/app.js">quake.loadData();</script>
+  </head>
+  <body>
+
+    <!-- Start of first page -->
+    <div data-role="page" id="home">
+      
+      <!-- /header -->
+      <div data-role="header" style="overflow:hidden;">
+        <h1>USGS -- Recent Earthquakes</h1>
+          <!-- /navbar -->
+            <div data-role="navbar">
+              <ul>
+                <li id="edit"><a href="#editMode" data-icon="edit">Edit</a></li>
+                <li><a href="#refresh" data-icon="refresh">Reload data</a></li>
+                <li><a href="#popupBasic" data-rel="popup" data-icon="info" data-transition="pop">About</a></li>
+              </ul>
+            </div>
+        </div>
+
+      <!-- /about popup --> 
+      <div data-role="popup" id="popupBasic">
+        <p>This application displays earthquakes from the last 30 days, according to the <a href="http://earthquake.usgs.gov/earthquakes/" target="_blank">USGS</a>.<br><br>Choose "Edit" to remove rows of data.<br>Select a title for more information about a particular quake.<br><br><span id="smallQuake">Light green background</span> denotes quakes of magnitude 5 and less.<br><span id="mediumQuake">Light red background</span> denotes quakes between 5 and 7.<br><span id="largeQuake">Dark red background</span> denotes quakes greater than 7.</p>
+      </div>
+      
+      <!-- /content -->
+      <div role="main" class="home-content">
+        <!-- /quake data -->
+        <table data-role="table" class="ui-responsive">
+          <thead>
+            <tr class="ui-bar-d" style="background-color: #FFFFFF;">
+              <th></th>
+              <th>Title</th>
+              <th>Lat. / Long.</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          
+          <tbody id="quakeTable">
+          </tbody>
+        </table>
+      </div>
+        
+      <!-- /footer -->
+      <div data-role="footer">
+		    <h4></h4>
+      </div>
+    </div>
+    <!-- /end first page -->
+    
+    <script type="text/javascript">
+      // Load and display quake data
+      quake.loadData();
+      // Toggle variable
+      var editing = false;
+      $("#edit").click(function(){
+        // Toggle editing for current selection
+        editing = (!editing);
+        // User is editing fields
+        if(editing){
+          $("th#quakeItem").addClass("ui-shadow-icon ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-left");
+        }
+        if(!editing){
+          $("th#quakeItem").removeClass("ui-shadow-icon ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-left");
+        }
+      });
+    </script>
+    
+  </body>
+</html
