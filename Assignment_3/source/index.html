@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html class="ui-mobile">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile Tech Challenge #2 -- USGS Earthquake Data</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.3.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/jquery.mobile-1.4.3.min.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+  </head>
+  <body>
+
+    <!-- Start of first page -->
+    <div data-role="page" id="home">
+      
+      <!-- /header -->
+      <div id="siteHeader" data-role="header" style="overflow:hidden; position: fixed; width:100%; z-index:100;">
+        <h1>USGS - Earthquakes</h1>
+          <!-- /navbar -->
+            <div data-role="navbar">
+              <ul>
+                <li id="edit"><a href="#editMode" data-icon="edit"><span id="editOption">Edit</span></a></li>
+                <li id="refresh"><a href="#refreshMode" data-icon="refresh">Reload data</a></li>
+                <li><a href="#aboutPopup" data-rel="popup" data-icon="info" data-transition="pop">About</a></li>
+              </ul>
+            </div>
+        </div>
+
+      <!-- /aboutPopup --> 
+      <div data-role="popup" id="aboutPopup">
+        <p>This application displays earthquakes from the last 30 days, according to the <a href="http://earthquake.usgs.gov/earthquakes/" target="_blank">USGS</a>.<br><br>Choose "Edit" to remove rows of data.<br>Select a title for more information about a particular quake.<br><br><span class="smallQuake">Light green background</span> denotes quakes of magnitude 5 and less.<br><span class="mediumQuake">Light red background</span> denotes quakes between 5 and 7.<br><span class="largeQuake">Dark red background</span> denotes quakes greater than 7.</p>
+      </div>
+      
+      <!-- /content -->
+      <div role="main" class="home-content" style="margin-top:100px;">
+        <!-- /quake data -->
+        <table data-role="table" data-mode="reflow" class="ui-responsive">
+          <thead>
+            <tr>
+              <th data-priority="1" class="delete">#</th>
+              <th data-priority="2">Title</th>
+              <th data-priority="3">Lat. / Long.</th>
+              <th data-priority="4">Time</th>
+            </tr>
+          </thead>
+          <tbody id="quakeTable">
+          </tbody>
+        </table>
+      </div>
+        
+      <!-- /footer -->
+      <div data-role="footer">
+		    <h4></h4>
+      </div>
+    </div>
+    <!-- /end first page -->
+    
+    <!-- Call Javascript functions -->
+    <script type="text/javascript">
+      
+      // Load and display quake data
+      quake.loadData();
+      
+      // Force data refresh
+      $("#refresh").click(function(){
+        quake.forceDataRefresh();
+      });
+      
+      // Enter/exit list edit mode
+      //var editing = false;
+      $("#edit").click(function(){
+        quake.editData();
+      });
+    </script>
+    
+  </body>
+</html

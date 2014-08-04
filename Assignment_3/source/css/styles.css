@@ -1,0 +1,11 @@
+.largeQuake{
+  background-color: rgba(250,55,55,.6);
+}
+
+.mediumQuake{
+  background-color: rgba(250,55,55,.2);
+}
+
+.smallQuake{
+  background-color: rgb(196,245,199);
+}

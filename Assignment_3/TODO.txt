@@ -1,0 +1,8 @@
+Max Hubenthal
+Monday, August 4th, 2014
+
+Assignment #2 TODOs:
+
+1. Make column headers sticky for desktop width view
+2. Make '#' sign reappear when app is refreshed
+3. Make sure busy indicator/no network indicator function
