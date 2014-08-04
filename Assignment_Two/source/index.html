@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.mobile-1.4.3.min.js"></script>
-    <script type="text/javascript" src="js/app.js">quake.loadData();</script>
+    <script type="text/javascript" src="js/app.js"></script>
   </head>
   <body>
 
@@ -17,7 +17,7 @@
       
       <!-- /header -->
       <div id="siteHeader" data-role="header" style="overflow:hidden; position: fixed; width:100%; z-index:100;">
-        <h1>USGS -- Recent Earthquakes</h1>
+        <h1>USGS - Earthquakes</h1>
           <!-- /navbar -->
             <div data-role="navbar">
               <ul>
@@ -30,21 +30,8 @@
 
       <!-- /aboutPopup --> 
       <div data-role="popup" id="aboutPopup">
-        <p>This application displays earthquakes from the last 30 days, according to the <a href="http://earthquake.usgs.gov/earthquakes/" target="_blank">USGS</a>.<br><br>Choose "Edit" to remove rows of data.<br>Select a title for more information about a particular quake.<br><br><span id="smallQuake">Light green background</span> denotes quakes of magnitude 5 and less.<br><span id="mediumQuake">Light red background</span> denotes quakes between 5 and 7.<br><span id="largeQuake">Dark red background</span> denotes quakes greater than 7.</p>
+        <p>This application displays earthquakes from the last 30 days, according to the <a href="http://earthquake.usgs.gov/earthquakes/" target="_blank">USGS</a>.<br><br>Choose "Edit" to remove rows of data.<br>Select a title for more information about a particular quake.<br><br><span class="smallQuake">Light green background</span> denotes quakes of magnitude 5 and less.<br><span class="mediumQuake">Light red background</span> denotes quakes between 5 and 7.<br><span class="largeQuake">Dark red background</span> denotes quakes greater than 7.</p>
       </div>
-      
-      <!-- /deletePopup 
-      <div data-role="popup" id="deletePopup"data-dismissible="false">
-        <div data-role="header">
-          <h1>Delete Item?</h1>
-        </div>
-        <div role="main" class="ui-content">
-          <p>This action cannot be undone.</p>
-          <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-          <button id="deleteQuake" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Delete</button>
-        </div>
-      </div>
-      -->
       
       <!-- /content -->
       <div role="main" class="home-content" style="margin-top:100px;">
@@ -52,13 +39,12 @@
         <table data-role="table" data-mode="reflow" class="ui-responsive">
           <thead>
             <tr>
-              <th data-priority="1" class="delete">-</th>
-              <th data-priority="persist">Title</th>
-              <th data-priority="2">Lat. / Long.</th>
-              <th data-priority="3">Time</th>
+              <th data-priority="1" class="delete">#</th>
+              <th data-priority="2">Title</th>
+              <th data-priority="3">Lat. / Long.</th>
+              <th data-priority="4">Time</th>
             </tr>
           </thead>
-          
           <tbody id="quakeTable">
           </tbody>
         </table>
@@ -71,6 +57,7 @@
     </div>
     <!-- /end first page -->
     
+    <!-- Call Javascript functions -->
     <script type="text/javascript">
       
       // Load and display quake data
@@ -82,29 +69,9 @@
       });
       
       // Enter/exit list edit mode
-      var editing = false;
+      //var editing = false;
       $("#edit").click(function(){
-        // Toggle editing for current selection
-        editing = (!editing);
-        // User is editing fields
-        if(editing){
-          $("#editOption").replaceWith("<span style=\"color:red\" id=\"editOption\">EDITING<span>");
-          $("th.rowControl").each(function(){
-            $(this).replaceWith("<th class=\"deleteButton\"><button class=\"ui-btn ui-corner-all ui-icon-delete ui-btn-icon-left\"><span style=\"color:red\">Delete Item<span></button></th>");
-          });
-        } 
-        
-        // Delete item from list
-        $(".deleteButton").click(function(){
-          var contents = $(this).parent();
-          contents.remove();
-        });
-         
-        
-        if(!editing){
-          $("#editOption").replaceWith("<span id=\"editOption\">Edit<span>");
-          $(".deleteButton").replaceWith("<th class=\"rowControl\"></th>");
-        }
+        quake.editData();
       });
     </script>
     

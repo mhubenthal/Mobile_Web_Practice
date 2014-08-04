@@ -1,6 +1,7 @@
 (function (window){
   // Global variable for use in browser
   var quake = {};
+  var editing = false;
   
   // Load the data into the HTML.
   // Use cached data if appropriate.
@@ -82,11 +83,14 @@
     // Clear table, in case of forced refresh
     $("tbody#quakeTable").replaceWith("<tbody id=\"quakeTable\"></tbody>");
     // Write data to HTML
+    var displayIndex = 1;
     $.each(quakeArray, function(index,value){
+      // Only display present elements
+      if(value!==null){
         // Large quake, shade dark red
         if(value.subject >= 7){
           $("#quakeTable").append(
-            "<tr class=\"largeQuake\"><th class=\"rowControl\"></th><td><a href=\""+value.link+"/download/intensity.jpg\" target=\"_blank\">"+value.title+
+            "<tr class=\"largeQuake\"><th class=\"rowControl\">"+displayIndex+"</th><td id=\""+index+"\"><a href=\""+value.link+"/download/intensity.jpg\" target=\"_blank\">"+value.title+
             "</a></td><td>"+value.lat+" / "+value.long+
             "</td><td>"+(toTime(value.seconds))+
             "</td></tr>"
@@ -95,7 +99,7 @@
         // Medium quake, shade light red
         if(value.subject >=5){
           $("#quakeTable").append(
-            "<tr class=\"mediumQuake\"><th class=\"rowControl\"></th><td><a href=\""+value.link+"/download/intensity.jpg\" target=\"_blank\">"+value.title+
+            "<tr class=\"mediumQuake\"><th class=\"rowControl\">"+displayIndex+"</th><td id=\""+index+"\"><a href=\""+value.link+"/download/intensity.jpg\" target=\"_blank\">"+value.title+
             "</a></td><td>"+value.lat+" / "+value.long+
             "</td><td>"+(toTime(value.seconds))+
             "</td></tr>"
@@ -104,12 +108,18 @@
         // Small quake, no shading
         if(value.subject < 5){
           $("#quakeTable").append(
-            "<tr class=\"smallQuake\"><th class=\"rowControl\"></th><td><a href=\""+value.link+"/download/intensity.jpg\" target=\"_blank\">"+value.title+
+            "<tr class=\"smallQuake\"><th class=\"rowControl\">"+displayIndex+"</th><td id=\""+index+"\"><a href=\""+value.link+"/download/intensity.jpg\" target=\"_blank\">"+value.title+
             "</a></td><td>"+value.lat+" / "+value.long+
             "</td><td>"+(toTime(value.seconds))+
             "</td></tr>"
           );
         };
+        displayIndex++;
+      }
+      // Do nothing if element has been deleted
+      if(value===null){
+        ;
+      }
     });
   }
   
@@ -133,6 +143,47 @@
     // Clear local storage
     window.localStorage.clear();
     window.location.reload();
+  }
+  
+  // Public method, edit data
+  quake.editData = function(){
+    //Toggle editing var
+    editing = (!editing);
+    
+    // User is editing fields
+    if(editing){
+      $("#editOption").replaceWith("<span style=\"color:red\" id=\"editOption\">EDITING<span>");
+      var index = 1;
+      $("th.rowControl").each(function(){
+        $(this).replaceWith("<th class=\"deleteButton\"><button class=\"ui-btn ui-corner-all ui-icon-delete ui-btn-icon-left\"><span style=\"color:red\">Delete Item "+index+"<span></button></th>");
+        index++;
+      });
+    } 
+
+    // Delete item from list
+    $(".deleteButton").click(function(){
+      // Get tr to delete
+      var contents = $(this).parent();
+      // Get index of quake to delete from localStorage
+      var quakeToDelete = contents.children("td").attr("id");
+      // Delete quake from localStorage
+      var quakeData = JSON.parse(localStorage.getItem('quakeData'));
+      delete quakeData.quakes[quakeToDelete];
+      localStorage.setItem('quakeData', JSON.stringify(quakeData));
+      // Remove HTML for deleted quake
+      contents.remove();
+    });
+
+    // Reset edit menu if done editing
+    if(!editing){
+      $("#editOption").replaceWith("<span id=\"editOption\">Edit<span>");
+      // Reset earthquake numbering
+      var index = 1;
+      $("th.deleteButton").each(function(){
+        $(this).replaceWith("<th class=\"rowControl\">"+index+"</th>");
+        index++;
+      });
+    }
   }
   
   // Register the quake object to the global namespace

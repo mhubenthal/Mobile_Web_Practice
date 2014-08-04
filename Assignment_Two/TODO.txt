@@ -1,7 +1,8 @@
 Max Hubenthal
-Wednesday, July 30th, 2014
+Monday, August 4th, 2014
 
-Assignment #1 TODOs:
+Assignment #2 TODOs:
 
-1. If “Activity” page is refreshed, upon returning to Home page, button is not centered. Button becomes centered after a refresh.
-2. Footer bar does not sit at bottom of “Activity” page.
+1. Make column headers sticky for desktop width view
+2. Make '#' sign reappear when app is refreshed
+3. Make sure busy indicator/no network indicator function
