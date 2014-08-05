@@ -1,0 +1,10 @@
+-- Setup "zipcodes" table in Postgres from "places" table.
+
+SELECT zipcode, lat, long, population, housingunits, income, landarea, waterarea, militaryrestrictioncodes INTO TABLE zipcodes FROM places;
+
+ALTER TABLE zipcodes ADD COLUMN zipcode_id SERIAL;
+
+UPDATE zipcodes SET zipcode_id = nextval(pg_get_serial_sequence('zipcodes','zipcode_id'));
+
+ALTER TABLE zipcodes ADD PRIMARY KEY (zipcode_id);
+

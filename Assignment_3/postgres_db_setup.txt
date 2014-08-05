@@ -1,0 +1,34 @@
+Max Hubenthal
+Mobile Web Assignment #3
+
+
+
+Postgres Database Setup -- Importing/Modifying Data From CSV File
+
+
+
+1. Install Postgres on my machine.
+
+2. Create database: "createdb placesdb"
+
+3. Open PostgresSQL interactive terminal: "psql placesdb"
+
+(Note: Postgres does not like the empty string "" to represent a NULL value, which is how the data came in. The .csv file needed to modified to remove all occurences of "" as well as an odd value "???".)
+
+4. Filter the data into a cleaned up .csv file with "sed"(stream editor):
+	(Apply substitution for all occurences, replacing "" or "???" with a true empty string -- i.e. no quotes. Then rename file something nice.)	
+	- "sed 's/'\"\"'/''/g' free-zipcode-database.csv > zipcode-database.csv"
+	- "sed 's/'\"???\"'/''/g' zipcode-database.csv > zipcode-database2.csv"
+	- "cp zipcode-database2.csv zipcode-database.csv"
+
+5. In psql, run stored procedure to set up initial table: 
+	("\i" executes commands found in a file within psql. In this case stored procedures for setup of the initial table.)	
+	- "\i Mobile_Web_Practice/Assignment_3/places_sp_setup"
+	(Returns "COPY 80264", the integer being the number of rows copied.)
+
+6. In psql run stored procedures to set up "zipcodes" and "locations" tables from original "places" table:
+	- "\i Mobile_Web_Practice/Assignment_3/"zipcodes_sp_setup"
+	- "\i Mobile_Web_Practice/Assignment_3/"locations_sp_setup"
+	(Both stored procedures ad an "id" column, type "SERIAL" set as "PRIMARY KEY".)
+
+

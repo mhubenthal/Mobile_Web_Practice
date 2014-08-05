@@ -1,0 +1,5 @@
+-- Setup initial table in Postgres from (cleaned up) zipcode/location data.
+
+CREATE TABLE places (ZIPCODE char(5), LAT double precision, LONG double precision, CITY varchar, STATE char(2), COUNTY varchar, TYPE varchar, PREFERRED varchar, WORLDREGION varchar, COUNTRY varchar, LOCATIONTEXT varchar, LOCATION varchar, POPULATION integer, HOUSINGUNITS integer, INCOME integer, LANDAREA double precision, WATERAREA double precision, DECOMMISSIONED varchar, MILITARYRESTRICTIONCODES varchar);
+
+COPY places FROM '/Users/maxhubenthal/Desktop/Mobile_Web_Practice/Assignment_3/zipcode-database.csv' DELIMITER ',' CSV;
