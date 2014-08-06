@@ -1,8 +1,6 @@
 Max Hubenthal
-Monday, August 4th, 2014
+, August , 2014
 
-Assignment #2 TODOs:
+Assignment #3 TODOs:
 
-1. Make column headers sticky for desktop width view
-2. Make '#' sign reappear when app is refreshed
-3. Make sure busy indicator/no network indicator function
+(Note: IndexedDB support is still limited, browser prefixes and fallbacks would be essential in production. Or possibly not using IndexedDB at all.)
