@@ -3,4 +3,4 @@ Max Hubenthal
 
 Assignment #3 TODOs:
 
-(Note: IndexedDB support is still limited, browser prefixes and fallbacks would be essential in production. Or possibly not using IndexedDB at all.)
+(Note: IndexedDB support is still limited, browser prefixes and fallbacks would be essential in production. Or possibly not using IndexedDB at all, maybe using localStorage combined with server-side storage.)

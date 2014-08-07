@@ -6,7 +6,7 @@
     <title>Mobile Tech Challenge #3 -- Zipcode/Location Data</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.4.3.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/jquery-1.11.1.js"></script>
     <script src="js/jquery.mobile-1.4.3.min.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
   </head>
@@ -60,19 +60,23 @@
     <!-- Call Javascript functions -->
     <script type="text/javascript">
       
-      var display = function(){app.db.getAll(function(item){
-        console.log(item);
-      });};
-      var testA = {id: 1};
-      var testB = {id: 1};
-      var testC = {id: 1};
-      app.db.save(testA,display);
-      app.db.save(testB,display);
-      app.db.save(testC,display);
-      //app.db.getAll(function(item){
-        //console.log(item);
-      //});
-
+      /*
+      var locationItem = [{'locationtext': 'Richmond', 'state': 'VA'}];
+      var zipcodeItem = [{'zipcode': '23227', 'lat': '12.345'}];
+      app.db.save(locationItem,['locationData'],display);
+      app.db.save(zipcodeItem,['zipcodeData'],display);
+      var display = function(){
+        app.db.getAll(['locationData'],function(item){ console.log('Item: ' + item[0].locationtext) + ' ' + item[1].locationtext; });
+      };
+      var locationItem2 = [{'locationtext': 'Boston', 'state': 'MA'}];
+      var zipcodeItem2 = [{'zipcode': '02458', 'lat': '6.534542'}];
+      app.db.save(locationItem2,['locationData'],display);
+      app.db.save(zipcodeItem2,['zipcodeData'],display);
+      var locationItem3 = [{'locationtext': 'Boston', 'state': 'WI'}];
+      var zipcodeItem3 = [{'zipcode': '02458', 'lat': '600.534542'}];
+      app.db.save(locationItem3,['locationData'],display);
+      app.db.save(zipcodeItem3,['zipcodeData'],display);
+      */
     </script>
     
   </body>

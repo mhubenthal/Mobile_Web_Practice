@@ -26,9 +26,8 @@ Postgres Database Setup -- Importing/Modifying Data From CSV File
 	- "\i Mobile_Web_Practice/Assignment_3/places_sp_setup"
 	(Returns "COPY 80264", the integer being the number of rows copied.)
 
-6. In psql run stored procedures to set up "zipcodes" and "locations" tables from original "places" table:
+6. In psql run stored procedures to set up "zipcodes" and "locations" tables from original "places" table and also create CSV files from each table:
 	- "\i Mobile_Web_Practice/Assignment_3/"zipcodes_sp_setup"
 	- "\i Mobile_Web_Practice/Assignment_3/"locations_sp_setup"
-	(Both stored procedures ad an "id" column, type "SERIAL" set as "PRIMARY KEY".)
 
-
+7. Use the Node module 'csvtojson' to convert from the .csv to .json file (for use with IndexedDB). 

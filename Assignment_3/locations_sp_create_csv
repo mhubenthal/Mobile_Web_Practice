@@ -1,0 +1,10 @@
+-- Setup "locations" table in Postgres from "places" table.
+
+SELECT city, state, county, type, preferred, worldregion, country, locationtext, location INTO TABLE locations FROM places;
+
+COPY (SELECT * FROM locations) TO '/Users/maxhubenthal/Desktop/locations.csv' WITH CSV HEADER;
+
+-- ( Don't add 'id' column, IndexedDB will create indices. )
+-- ALTER TABLE locations ADD COLUMN location_id SERIAL;
+-- UPDATE locations SET location_id = nextval(pg_get_serial_sequence('locations','location_id'));
+-- ALTER TABLE locations ADD PRIMARY KEY (location_id);
