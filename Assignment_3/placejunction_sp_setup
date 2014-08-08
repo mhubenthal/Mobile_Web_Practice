@@ -1,3 +1,0 @@
--- Setup "placejunction" table in Postgres from "locations" and "zipcodes" tables.
-
-CREATE TABLE placejunction(location_id SERIAL, zipcode_id SERIAL, CONSTRAINT fk_location_id FOREIGN KEY (location_id) REFERENCES locations(location_id), CONSTRAINT fk_zipcode_id FOREIGN KEY (zipcode_id) REFERENCES zipcodes(zipcode_id));

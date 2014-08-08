@@ -14,8 +14,8 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     name: 'Places',
     objectStoreNames: ['locationData','zipcodeData'],
     instance: {},
-    searchFinished: false,
-    searchResults: []
+    zipcodeSearchResults: [],
+    locationSearchResults: []
   }
     
   // Upgrade is needed on db
@@ -100,9 +100,17 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     txn = db.instance.transaction('zipcodeData', 'readonly');
     store = txn.objectStore('zipcodeData');
     idx = store.index('zipcodeData');
+    // Prepare upper bound to allow for partial searching
+    var upperBound = zipToSearch;
+    var diff = 5-zipToSearch.length;
+    if(diff>=1){
+      for(var i=0;i<diff;i++){
+        zipToSearch = zipToSearch + '0';
+        upperBound = upperBound + '9';
+      }
+    }
     // Make a cursor request, bound by the queried zipcode
-    console.log(zipToSearch);
-    req = idx.openCursor(IDBKeyRange.bound(zipToSearch,zipToSearch+1));
+    req = idx.openCursor(IDBKeyRange.bound(zipToSearch,upperBound));
     req.onsuccess = function(e){
       var cursor = e.target.result;
       if(cursor){
@@ -115,15 +123,37 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     };
   }
   
-  // Search for a set of records from the zipcode store using zip index
+  // Search for a set of records from the city store using city index
   function searchDatabaseByCity(cityToSearch,callback){
     var txn, req, store, idx, cityArray = [], done = false; 
     // Request the index for the specified objectStore
     txn = db.instance.transaction('locationData', 'readonly');
     store = txn.objectStore('locationData');
     idx = store.index('locationData');
-    // Make a cursor request, bound by the queried zipcode
-    console.log(cityToSearch);
+    // Set to an unlikely upper bound...possibly change this 'magic number'?
+    var upperBound = cityToSearch + 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ';
+    // Make a cursor request, bound by the queried city
+    req = idx.openCursor(IDBKeyRange.bound(cityToSearch,upperBound));
+    req.onsuccess = function(e){
+      var cursor = e.target.result;
+      if(cursor){
+        cityArray.push(e.target.result.value);
+        cursor.continue();
+      }
+      else{
+        callback(cityArray);
+      }
+    };
+  }
+  
+  // Search for a set of records with zipcode and location data
+  function searchDatabaseByZipCity(zipCityArray,callback){
+    var txn, req, store, idx, cityArray = [], done = false; 
+    // Request the index for the specified objectStore
+    txn = db.instance.transaction('locationData', 'readonly');
+    store = txn.objectStore('locationData');
+    idx = store.index('locationData');
+    // Make a cursor request, bound by the queried zipcode and city
     req = idx.openCursor(IDBKeyRange.bound(cityToSearch,cityToSearch));
     req.onsuccess = function(e){
       var cursor = e.target.result;
@@ -136,81 +166,6 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
       }
     };
   }
-
-    /* Add/update one item in a db store (CREATE/UPDATE)
-    //   'storeToAddTo' is an array of 1 objectStore.
-    save: function(data, storeToAddTo, callback){
-      // Call 'open' to open db
-      db.open(function(){
-        var store, request, mode = 'readwrite';
-        store = db.getObjectStore(storeToAddTo, mode);
-        var storeKey = store.keyPath;
-        request = data[0][storeKey] ? store.put(data[0]) : store.add(data[0]);
-        request.onsuccess = callback;
-      });
-    }, */
-
-    /* Retrieve all items from the specified db store (READ)
-    //   'storeToGet' is an array of 1 store
-    getAll: function(storeToGet, callback){
-      // Call 'open' to open db
-      db.open(function(){
-        var store = db.getObjectStore(storeToGet), cursor = store.openCursor(), data = [];
-        cursor.onsuccess = function(e){
-          var result = e.target.result;
-          // If value is found and not null, add to data for callback function
-          if(result && result !== null){
-            data.push(result.value);
-            result.continue();
-          } 
-          else{
-            callback(data);
-          }
-        };
-      });
-    },
-
-    // Get a single item from the store (READ)
-    //   'storeToGet' is an array of 1 store.
-    //   'itemToGet' is a string representing a key value.
-    get: function(storeToGet, itemToGet, callback){
-      db.open(function(){
-        var store = db.getObjectStore(storeToGet);
-        var index = store.index(store.indexNames[0]);
-        index.get(itemToGet).onsuccess = function(e){
-          callback(e.target.result);
-        };
-      });
-    }, */
-
-    /*
-    // (** Not needed for this application. **)
-    // Update to work for many-to-many relationships
-    // Delete a single item from the store (DELETE)
-    'delete': function(id, callback){
-      console.log('delete');
-      id = parseInt(id);
-      db.open(function(){
-        var mode = 'readwrite', store, request;
-        store = db.getObjectStore(mode);
-        request = store.delete(id);
-        request.onsuccess = callback;
-      });
-    },
-    
-    // (** Not needed for this application. **)
-    // Delete all items from the store (DELETE)
-    deleteAll: function(callback){
-      console.log('deleteall');
-      db.open(function(){
-        var mode, store, request;
-        mode = 'readwrite';
-        store = db.getObjectStore(mode);
-        request = store.clear();
-        request.onsuccess = callback;
-      });
-    }
-    */
   
   // Call to load db into indexedDB
   db.loadData = function(){
@@ -222,11 +177,9 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
   // Call for zip only search
   db.searchByZip = function(zipToSearch,callback){
     // Clear any old search data
-    db.searchFinished = false;
-    db.searchResults = [];
+    db.zipcodeSearchResults = [];
     searchDatabaseByZip(zipToSearch,function(newArray){
-      db.searchResults = newArray;
-      db.searchFinished = true;
+      db.zipcodeSearchResults = newArray;
       callback(newArray);
     });
   };
@@ -234,18 +187,23 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
   // Call for city only search
   db.searchByCity = function(cityToSearch,callback){
     // Clear any old search data
-    db.searchFinished = false;
-    db.searchResults = [];
+    db.locationSearchResults = [];
     searchDatabaseByCity(cityToSearch,function(newArray){
-      db.searchResults = newArray;
-      db.searchFinished = true;
+      db.locationSearchResults = newArray;
       callback(newArray);
     });
   };
     
   // Call for search using zip and city
-  db.searchByZipCity = function(zipCityArray){
-    return locations;
+  db.searchByZipCity = function(zipCityArray,callback){
+    // Clear any old search data
+    db.zipcodeSearchResults = [];
+    db.locationSearchResults = [];
+    searchDatabaseByZipCity(zipCityArray,function(newZipArray,newCityArray){
+      db.zipcodeSearchResults = newZipArray;
+      db.locationSearchResults = newCityArray;
+      callback(newZipArray,newCityArray);
+    });
   };
 
   // Register the db on the window.app object.

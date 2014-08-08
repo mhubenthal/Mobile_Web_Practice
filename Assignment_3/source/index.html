@@ -111,10 +111,12 @@
         // Get search values
         var zipCity = [];
         zipCity[0] = $("#zipcode").val();
-        zipCity[1] = $("#city").val();
+        zipCity[1] = $("#city").val().toUpperCase();
         // Fetch/display data
-        var zipCityResults = app.db.searchByZipCity(zipCity);
-        app.ui.displayResults(zipCityResults);
+        // Fetch/display data, with a call to display as the callback
+        app.db.searchByZipCity(zipCity, function(zipResults,cityResults){
+          app.ui.displayResults(zipResults,cityResults);
+        });
       });
       
       /*4. Clear search

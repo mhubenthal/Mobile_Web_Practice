@@ -6,3 +6,5 @@ Assignment #3 TODOs:
 (Note: IndexedDB support is still limited, browser prefixes and fallbacks would be essential in production. Or possibly not using IndexedDB at all, maybe using localStorage combined with server-side storage.)
 
 1. Add localStorage to app, to store and display the most recent search a user performed.
+
+2. Output message when no results retrieved.
