@@ -6,8 +6,9 @@
     <title>Mobile Tech Challenge #3 -- Zipcode/Location Data</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.4.3.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="js/jquery-1.11.1.js"></script>
+    <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.mobile-1.4.3.min.js"></script>
+    <script type="text/javascript" src="js/ui.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
   </head>
   <body>
@@ -16,36 +17,45 @@
     <div data-role="page" id="home">
       
       <!-- /header -->
-      <div id="siteHeader" data-role="header" style="overflow:hidden; position: fixed; width:100%; z-index:100;">
-        <h1>Zipcodes &amp; Locations</h1>
-          <!-- /navbar -->
-            <div data-role="navbar">
-              <ul>
-                <li id="edit"><a href="#editMode" data-icon="edit"><span id="editOption">Search by Zipcode</span></a></li>
-                <li id="refresh"><a href="#refreshMode" data-icon="refresh">Search by Location</a></li>
-                <li><a href="#aboutPopup" data-rel="popup" data-icon="info" data-transition="pop">About</a></li>
-              </ul>
-            </div>
+      <div class="site-header" data-role="header">
+        <h1>Place Search</h1>
+        <a href="#aboutPopup" class="ui-btn-right" data-rel="popup" data-transition="pop" data-role="button" data-icon="info">About</a>
+        <!-- /search inputs -->
+        <div class="inline-search">
+          <label for="zipcode">Zipcode:</label>
+          <input type="text" name="zipcode" placeholder="Zipcode" id="zipcode">
         </div>
+        <div class="inline-search">
+          <label for="city">City:</label>
+          <input type="text" name="city" placeholder="City" id="city">
+        </div>
+        <div class="search-options">
+          <label>Search options:</label>
+          <button id="zipSearch">Zipcode</button>
+          <button id="citySearch">City</button>
+          <button id="zipCitySearch">Zipcode &amp; City</button>
+          <button id="clearSearch">Clear</button>
+        </div>
+      </div>
 
       <!-- /aboutPopup --> 
       <div data-role="popup" id="aboutPopup">
-        <p>This application allows the user to search for a place, either by zipcode or location name. More information about the result(s) may be displayed by selecting an item.</p>
+        <p>This application allows the user to search for a place; by zipcode, city or both zipcode and city.<br><br>The user may search using partial zipcodes and city names. More information about the result(s) will be displayed by selecting an item.</p>
       </div>
       
       <!-- /content -->
-      <div role="main" class="home-content" style="margin-top:100px;">
-        <!-- /quake data -->
+      <div role="main" class="home-content">
+        <!-- /place data -->
         <table data-role="table" data-mode="reflow" class="ui-responsive">
           <thead>
             <tr>
               <th data-priority="1" class="delete">#</th>
-              <th data-priority="2">Title</th>
-              <th data-priority="3">Lat. / Long.</th>
-              <th data-priority="4">Time</th>
+              <th data-priority="2">Zipcode</th>
+              <th data-priority="3">City</th>
+              <th data-priority="4">State</th>
             </tr>
           </thead>
-          <tbody id="quakeTable">
+          <tbody id="placeTable">
           </tbody>
         </table>
       </div>
@@ -59,24 +69,73 @@
     
     <!-- Call Javascript functions -->
     <script type="text/javascript">
+      // Make a call to load the database, it will not
+      //   be loaded if already present.
+      app.db.loadData();
+
+      /*2. Check if a search-option button was pressed:
+        1. Search by zip
+          1. Query database with zipcode index using cursor with numerical range
+          2. If results: clear table, display them
+          3. If no results: clear table, display message */
+      $("#zipSearch").click(function(){
+        // Get search values
+        var zipToSearch = $("#zipcode").val();
+        // Fetch/display data, with a call to display as the callback
+        app.db.searchByZip(zipToSearch, function(zipResults){
+          app.ui.displayResults(zipResults);
+        });
+      });
       
-      /*
-      var locationItem = [{'locationtext': 'Richmond', 'state': 'VA'}];
-      var zipcodeItem = [{'zipcode': '23227', 'lat': '12.345'}];
-      app.db.save(locationItem,['locationData'],display);
-      app.db.save(zipcodeItem,['zipcodeData'],display);
-      var display = function(){
-        app.db.getAll(['locationData'],function(item){ console.log('Item: ' + item[0].locationtext) + ' ' + item[1].locationtext; });
-      };
-      var locationItem2 = [{'locationtext': 'Boston', 'state': 'MA'}];
-      var zipcodeItem2 = [{'zipcode': '02458', 'lat': '6.534542'}];
-      app.db.save(locationItem2,['locationData'],display);
-      app.db.save(zipcodeItem2,['zipcodeData'],display);
-      var locationItem3 = [{'locationtext': 'Boston', 'state': 'WI'}];
-      var zipcodeItem3 = [{'zipcode': '02458', 'lat': '600.534542'}];
-      app.db.save(locationItem3,['locationData'],display);
-      app.db.save(zipcodeItem3,['zipcodeData'],display);
-      */
+      /*2. Search by city
+          1. Transform text to uppercase for query
+          2. Query database with city index using cursor with text range
+          3. If results: clear table, display them
+          4. If no results: clear table, display message */
+      $("#citySearch").click(function(){
+        // Get search values
+        var cityToSearch = $("#city").val().toUpperCase();
+        // Fetch/display data, with a call to display as the callback
+        app.db.searchByCity(cityToSearch, function(cityResults){
+          app.ui.displayResults(cityResults);
+        });
+      });
+      
+      /*3. Search by zip/city
+          1. Query database for all zipcodes
+          2. Query database for all cities
+          3. Store the intersection of both sets of queries
+          4. If results: clear table, display them
+          5. If no results: clear table, display message */
+      $("#zipCitySearch").click(function(){
+        // Get search values
+        var zipCity = [];
+        zipCity[0] = $("#zipcode").val();
+        zipCity[1] = $("#city").val();
+        // Fetch/display data
+        var zipCityResults = app.db.searchByZipCity(zipCity);
+        app.ui.displayResults(zipCityResults);
+      });
+      
+      /*4. Clear search
+          1. Clear table */
+      $("#clearSearch").click(function(){
+        // Clear text fields
+        $("#zipcode").val('');
+        $("#city").val('');
+        // Clear display table
+        app.ui.clearResults();
+      });
+      
+      /*3. If map button is pressed, open new window with appropriate data/links
+        1. If map pin is selected, open new window with table displaying demographic data */
+      $("#openMap").click(function(){
+        app.ui.displayMap();
+      });
+      $("#showInfo").click(function(){
+        app.ui.displayInfo();
+      });
+      
     </script>
     
   </body>

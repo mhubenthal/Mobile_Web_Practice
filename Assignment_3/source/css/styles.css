@@ -1,11 +1,46 @@
-.largeQuake{
-  background-color: rgba(250,55,55,.6);
+/* Header/search styles */
+
+.site-header{
+  overflow:hidden; 
+  position: fixed; 
+  width:100%; 
+  z-index:100;
 }
 
-.mediumQuake{
-  background-color: rgba(250,55,55,.2);
+.inline-search{
+  display: inline;
+  float: left;
+  width: 50%;
 }
 
-.smallQuake{
-  background-color: rgb(196,245,199);
+.inline-search input{
+  width: 50%;
+}
+
+#clearSearch{
+  color: red;
+}
+
+.search-options #zipSearch{
+  margin-left: 4px;
+  width:22%;
+}
+
+.search-options #citySearch{
+  width:22%;
+}
+
+.search-options #zipCitySearch{
+  width:35%;
+}
+
+.search-options #clearSearch{
+  margin-right: 4px;
+  width:16%;
+}
+
+/* Table/main content styles */
+
+.home-content{
+  margin-top:190px;
 }
