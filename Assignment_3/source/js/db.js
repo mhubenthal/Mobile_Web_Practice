@@ -16,7 +16,7 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     instance: {},
     zipcodeSearchResults: [],
     locationSearchResults: []
-  }
+  };
     
   // Upgrade is needed on db
   function upgrade(e){
@@ -24,10 +24,14 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     var _db = e.target.result;  
     var names = db.objectStoreNames;
     // Create objectStores and indices
-    var locationStore = _db.createObjectStore(names[0], {autoIncrement: true});
-    var zipcodeStore = _db.createObjectStore(names[1], {autoIncrement: true});
-    locationStore.createIndex('locationData','city',{unique: false});
-    zipcodeStore.createIndex('zipcodeData','zipcode',{unique: false});
+    var locationStore = _db.createObjectStore(names[0], {keyPath: 'id'});
+    var zipcodeStore = _db.createObjectStore(names[1], {keyPath: 'id'});
+    // Create indexes based on city/zipcode info
+    locationStore.createIndex('locationCityIndex','city',{unique: false});
+    zipcodeStore.createIndex('zipcodeZipcodeIndex','zipcode',{unique: false});
+    // Create indexes based on id
+    locationStore.createIndex('locationIDIndex','id',{unique: true});
+    zipcodeStore.createIndex('zipcodeIDIndex','id',{unique: true});
     // Load records from .json files into IndexedDB, check that
     //   objectStore creation is complete
     locationStore.transaction.oncomplete = loadJSONDataset(['locationData'],'data/locations.json');
@@ -99,13 +103,13 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     // Request the index for the specified objectStore
     txn = db.instance.transaction('zipcodeData', 'readonly');
     store = txn.objectStore('zipcodeData');
-    idx = store.index('zipcodeData');
+    idx = store.index('zipcodeZipcodeIndex');
     // Prepare upper bound to allow for partial searching
     var upperBound = zipToSearch;
     var diff = 5-zipToSearch.length;
     if(diff>=1){
       for(var i=0;i<diff;i++){
-        zipToSearch = zipToSearch + '0';
+        //zipToSearch = zipToSearch + '0';
         upperBound = upperBound + '9';
       }
     }
@@ -129,7 +133,7 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     // Request the index for the specified objectStore
     txn = db.instance.transaction('locationData', 'readonly');
     store = txn.objectStore('locationData');
-    idx = store.index('locationData');
+    idx = store.index('locationCityIndex');
     // Set to an unlikely upper bound...possibly change this 'magic number'?
     var upperBound = cityToSearch + 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ';
     // Make a cursor request, bound by the queried city
@@ -146,63 +150,98 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
     };
   }
   
-  // Search for a set of records with zipcode and location data
-  function searchDatabaseByZipCity(zipCityArray,callback){
-    var txn, req, store, idx, cityArray = [], done = false; 
+  // Load selected map data
+  function loadMap(clickedMap,callback){
+    // Get id value of item
+    var selectedID = clickedMap.children("td").attr("id");
+    // Get the complete data for the selected item
+    var txn, req, store, idx, dataArray = []; 
     // Request the index for the specified objectStore
-    txn = db.instance.transaction('locationData', 'readonly');
-    store = txn.objectStore('locationData');
-    idx = store.index('locationData');
-    // Make a cursor request, bound by the queried zipcode and city
-    req = idx.openCursor(IDBKeyRange.bound(cityToSearch,cityToSearch));
+    txn = db.instance.transaction('zipcodeData', 'readonly');
+    store = txn.objectStore('zipcodeData');
+    // Request the record by ID
+    req = store.get(selectedID);
     req.onsuccess = function(e){
-      var cursor = e.target.result;
-      if(cursor){
-        cityArray.push(e.target.result.value);
-        cursor.continue();
-      }
-      else{
-        callback(cityArray);
-      }
+      // Add the locationData to the dataArray
+      dataArray.push(e.target.result);
+      txn = db.instance.transaction('locationData', 'readonly');
+      store = txn.objectStore('locationData');
+      // Request the record by ID
+      req = store.get(selectedID);
+      req.onsuccess = function(e){
+        dataArray.push(e.target.result);
+        // Display the results
+        callback(dataArray);
+      };
     };
   }
   
+  // Display selected map in new window
+  function displayMap(mapData){
+    // Clear table
+    $("tbody#placeTable").replaceWith("<tbody id=\"placeTable\"></tbody>");
+    // Add selected item info
+    $("#placeTable").append(
+            "<tr><th class=\"mapButton\"><button class=\"ui-btn ui-shadow ui-corner-all ui-icon-location ui-btn-icon-notext ui-btn-inline\">Map</button></th><td id=\""+mapData[0].id+"\">"+mapData[0].zipcode+
+            "</td><td>"+mapData[1].city+
+            "</td><td>"+mapData[1].state+
+            "</td></tr>"
+          );
+    
+    
+  }
+  
+  // ***********************
+  //
+  // DATABASE PUBLIC METHODS
+  //
+  // ***********************
+  
   // Call to load db into indexedDB
   db.loadData = function(){
+    console.log('Calling load');
     openDB(function(){
-      console.log();
+      console.log('Loading database.');
     });
   };
   
   // Call for zip only search
   db.searchByZip = function(zipToSearch,callback){
-    // Clear any old search data
-    db.zipcodeSearchResults = [];
-    searchDatabaseByZip(zipToSearch,function(newArray){
-      db.zipcodeSearchResults = newArray;
-      callback(newArray);
-    });
+    // No value was entered, don't search entire db!
+    if(zipToSearch.length===0){
+      console.log('Nothing entered.');
+    }
+    else{
+      // Clear any old search data
+      db.zipcodeSearchResults = [];
+      searchDatabaseByZip(zipToSearch,function(newArray){
+        db.zipcodeSearchResults = newArray;
+        callback(newArray);
+      });
+    }
   };
     
   // Call for city only search
   db.searchByCity = function(cityToSearch,callback){
-    // Clear any old search data
-    db.locationSearchResults = [];
-    searchDatabaseByCity(cityToSearch,function(newArray){
-      db.locationSearchResults = newArray;
-      callback(newArray);
-    });
+    // No value was entered, don't search entire db!
+    if(cityToSearch.length===0){
+      console.log('Nothing entered.');
+    }
+    else{
+      // Clear any old search data
+      db.locationSearchResults = [];
+      searchDatabaseByCity(cityToSearch,function(newArray){
+        db.locationSearchResults = newArray;
+        callback(newArray);
+      });
+    }
   };
-    
-  // Call for search using zip and city
-  db.searchByZipCity = function(zipCityArray,callback){
-    // Clear any old search data
-    db.zipcodeSearchResults = [];
-    db.locationSearchResults = [];
-    searchDatabaseByZipCity(zipCityArray,function(newZipArray,newCityArray){
-      db.zipcodeSearchResults = newZipArray;
-      db.locationSearchResults = newCityArray;
-      callback(newZipArray,newCityArray);
+  
+  // Display map
+  db.loadMap = function(callback){
+    $(".mapButton").click(function(){
+      var contents = $(this).parent();
+      loadMap(contents,callback);
     });
   };
 

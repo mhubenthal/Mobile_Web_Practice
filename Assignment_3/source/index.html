@@ -8,8 +8,18 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.mobile-1.4.3.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script type="text/javascript" src="js/ui.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
+    <script type="text/javascript">
+      // Start and stop loading icon on AJAX requests
+      $(document).ajaxStart(function() {
+        $.mobile.loading('show');
+      });
+      $(document).ajaxStop(function() {
+        $.mobile.loading('hide');
+      });
+    </script>
   </head>
   <body>
 
@@ -33,14 +43,13 @@
           <label>Search options:</label>
           <button id="zipSearch">Zipcode</button>
           <button id="citySearch">City</button>
-          <button id="zipCitySearch">Zipcode &amp; City</button>
           <button id="clearSearch">Clear</button>
         </div>
       </div>
 
       <!-- /aboutPopup --> 
       <div data-role="popup" id="aboutPopup">
-        <p>This application allows the user to search for a place; by zipcode, city or both zipcode and city.<br><br>The user may search using partial zipcodes and city names. More information about the result(s) will be displayed by selecting an item.</p>
+        <p>This application allows the user to search for a place by zipcode or city.<br><br>The user may search using partial zipcodes or partial city names. More information about the result(s) will be displayed by selecting an item's location icon.</p>
       </div>
       
       <!-- /content -->
@@ -49,15 +58,18 @@
         <table data-role="table" data-mode="reflow" class="ui-responsive">
           <thead>
             <tr>
-              <th data-priority="1" class="delete">#</th>
+              <th data-priority="1"></th>
               <th data-priority="2">Zipcode</th>
               <th data-priority="3">City</th>
               <th data-priority="4">State</th>
             </tr>
           </thead>
           <tbody id="placeTable">
+            <tr class="no-search"><th><br>* NOTHING SEARCHED *</th></tr>
           </tbody>
         </table>
+        <!-- Google map -->
+        <div id="location_map"></div>
       </div>
         
       <!-- /footer -->
@@ -73,72 +85,98 @@
       //   be loaded if already present.
       app.db.loadData();
 
-      /*2. Check if a search-option button was pressed:
-        1. Search by zip
-          1. Query database with zipcode index using cursor with numerical range
-          2. If results: clear table, display them
-          3. If no results: clear table, display message */
+      // Search by zip only
       $("#zipSearch").click(function(){
         // Get search values
         var zipToSearch = $("#zipcode").val();
         // Fetch/display data, with a call to display as the callback
         app.db.searchByZip(zipToSearch, function(zipResults){
           app.ui.displayResults(zipResults);
+          // Add listener to map icon
+          app.db.loadMap(displayGoogleMap);
         });
       });
       
-      /*2. Search by city
-          1. Transform text to uppercase for query
-          2. Query database with city index using cursor with text range
-          3. If results: clear table, display them
-          4. If no results: clear table, display message */
+      // Search by city only
       $("#citySearch").click(function(){
         // Get search values
         var cityToSearch = $("#city").val().toUpperCase();
         // Fetch/display data, with a call to display as the callback
         app.db.searchByCity(cityToSearch, function(cityResults){
           app.ui.displayResults(cityResults);
+          // Add listener to map icon
+          app.db.loadMap(displayGoogleMap);
         });
       });
       
-      /*3. Search by zip/city
-          1. Query database for all zipcodes
-          2. Query database for all cities
-          3. Store the intersection of both sets of queries
-          4. If results: clear table, display them
-          5. If no results: clear table, display message */
-      $("#zipCitySearch").click(function(){
-        // Get search values
-        var zipCity = [];
-        zipCity[0] = $("#zipcode").val();
-        zipCity[1] = $("#city").val().toUpperCase();
-        // Fetch/display data
-        // Fetch/display data, with a call to display as the callback
-        app.db.searchByZipCity(zipCity, function(zipResults,cityResults){
-          app.ui.displayResults(zipResults,cityResults);
+      // Function to load Google map
+      function displayGoogleMap(dataArray){
+        app.ui.clearResults();
+        $("tbody#placeTable").replaceWith("<tbody id=\"placeTable\"><tr class=\"no-results\"><th>Location map:</th></tr></tbody>");
+        var lat = dataArray[0].lat;
+        var lng = dataArray[0].long;
+        console.log('map '+lat+' '+lng);
+        // Make sure there is a valid lat/long
+        if(lat==undefined&&lng==undefined){
+          lat=0;
+          lng=0;
+        }
+        var newLatLng = new google.maps.LatLng(lat,lng);
+        var mapOptions = {
+          zoom: 13,
+          center: newLatLng
+        };
+        var map = new google.maps.Map(document.getElementById('location_map'),mapOptions);
+        var locationtext = dataArray[1].locationtext, zipcode = dataArray[0].zipcode, county = dataArray[1].county, type=dataArray[1].type, preferred = dataArray[1].preferred, worldregion = dataArray[1].worldregion, country = dataArray[1].country, population = dataArray[0].population, housingunits = dataArray[0].housingunits, income = dataArray[0].income, landarea = dataArray[0].landarea, waterarea = dataArray[0].waterarea, decommissioned = dataArray[0].decommissioned, militaryrestrictioncodes = dataArray[0].militaryrestrictioncodes;
+        var contentString = '<div id="content">'+
+            '<h3>'+zipcode+' '+locationtext+'</h3>'+
+            '<p>'+
+            '<b>County: </b>'+county+
+            '<br>'+
+            '<b>Type: </b>'+type+
+            '<br>'+
+            '<b>Preferred: </b>'+preferred+
+            '<br>'+
+            '<b>World Region: </b>'+worldregion+
+            '<br>'+
+            '<b>Country: </b>'+country+
+            '<br>'+
+            '<b>Population: </b>'+population+
+            '<br>'+
+            '<b>Housing Units: </b>'+housingunits+
+            '<br>'+
+            '<b>Income: </b>'+income+
+            '<br>'+
+            '<b>Land Area: </b>'+landarea+
+            '<br>'+
+            '<b>Water Area: </b>'+waterarea+
+            '<br>'+
+            '<b>Decommissioned: </b>'+decommissioned+
+            '<br>'+
+            '<b>Military Restriction Codes: </b>'+militaryrestrictioncodes+
+            '</p>'+
+            '</div>';
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
         });
-      });
+        var marker = new google.maps.Marker({
+          position: newLatLng,
+          map: map,
+          title: dataArray[1].locationtext
+        });
+        google.maps.event.addListener(marker,'click',function(){
+          infowindow.open(map,marker);
+        });
+      }
       
-      /*4. Clear search
-          1. Clear table */
+      // Clear search fields/results
       $("#clearSearch").click(function(){
         // Clear text fields
         $("#zipcode").val('');
         $("#city").val('');
         // Clear display table
         app.ui.clearResults();
-      });
-      
-      /*3. If map button is pressed, open new window with appropriate data/links
-        1. If map pin is selected, open new window with table displaying demographic data */
-      $("#openMap").click(function(){
-        app.ui.displayMap();
-      });
-      $("#showInfo").click(function(){
-        app.ui.displayInfo();
-      });
-      
+      });    
     </script>
-    
   </body>
 </html

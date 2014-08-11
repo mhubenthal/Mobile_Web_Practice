@@ -7,4 +7,8 @@ Assignment #3 TODOs:
 
 1. Add localStorage to app, to store and display the most recent search a user performed.
 
-2. Output message when no results retrieved.
+2. Fix column headers to display in small window.
+
+3. Right now, the two tables ('locationData' and 'zipcodeData') duplicate three fields/columns between the two. This is to enable searching only one table and getting the info required for the UI. It may be a bit of a hack not suitable for production.
+
+4. Find a way to test in a mobile phone (loading data may take quite awhile...).

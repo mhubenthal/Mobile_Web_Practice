@@ -23,11 +23,11 @@
 
 .search-options #zipSearch{
   margin-left: 4px;
-  width:22%;
+  width:31%;
 }
 
 .search-options #citySearch{
-  width:22%;
+  width:31%;
 }
 
 .search-options #zipCitySearch{
@@ -36,11 +36,20 @@
 
 .search-options #clearSearch{
   margin-right: 4px;
-  width:16%;
+  width:31%;
 }
 
 /* Table/main content styles */
 
 .home-content{
   margin-top:190px;
+}
+
+.no-results{
+  color:red;
+}
+
+#location_map{
+  width: 360px;
+  height: 360px;
 }
