@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html class="ui-mobile">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile Tech Challenge #4 -- SlaughterSpottr</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.3.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/jquery.mobile-1.4.3.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+  </head>
+  <body>
+
+    <!-- START of HOME page -->
+    <div data-role="page" id="home">
+      <!-- Page Header -->
+      <div id="site-header" data-role="header">
+        <a data-role="none" href="#home"><img src="img/logo-captech.png"/></a>
+      </div>
+      <!-- Body Content -->
+      <div id="site-content" data-role="content">
+        <p>Slaughter Spottr&trade;<br><img src="img/Slaughter.png"/><br>Slaughter has been spotted <span id="spot-count">X</span> times!</p>
+        <a href="#report" id="report-button" data-role="button" >Report Sighting</a>
+        <a href="#map" id="map-button" class="site-button" data-role="button" >Map Sightings</a>
+      </div>
+      <!-- Page Footer -->
+      <div id="site-footer" data-role="footer">
+        <p>&copy; CapTech Consulting</p>
+      </div>
+    </div>
+    <!-- END of HOME page -->
+
+    <!-- START of REPORT page -->
+    <div data-role="page" id="report">
+      <!-- Page Header -->
+      <div id="site-header" data-role="header">
+        <a data-role="none" href="#home"><img src="img/logo-captech.png"/></a>
+      </div>
+      <!-- Body Content -->
+      <div id="site-content" data-role="content" >
+        <a href="#home">&lt;&lt; Back</a><br>
+        <p>Report Sighting<br>Your Location<br><a href="#report">Refresh</a></p>
+        <button id="new-sighting-button" data-role="button" >Report Sighting</button>
+        <img src="img/twitter.gif"/><img src="img/facebook.jpg"/>
+      </div>
+      <!-- Page Footer -->
+      <div id="site-footer" data-role="footer">
+        <p>&copy; CapTech Consulting</p>
+      </div>
+    </div>
+    <!-- END of REPORT page -->
+
+    <!-- START of MAP page -->
+    <div data-role="page" id="map">
+      <!-- Page Header -->
+      <div id="site-header" data-role="header">
+        <a data-role="none" href="#home"><img src="img/logo-captech.png"/></a>
+      </div>
+      <!-- Body Content -->
+      <div id="site-content" data-role="content" >
+        <a href="#home">&lt;&lt; Back</a><br>
+        <p>Slaughter Sightings</p>
+        <div id="sightings-map"></div>
+      </div>
+      <!-- Page Footer -->
+      <div id="site-footer" data-role="footer">
+        <p>&copy; CapTech Consulting</p>
+      </div>
+    </div>
+    <!-- END of MAP page -->
+    
+    <!-- Call Javascript functions -->
+    <script type="text/javascript"> 
+      // Load sightings data if user chooses map page
+      $.getJSON('http://slaughterspottr.herokuapp.com/api/list',function(data){
+        app.loadData(data);
+      });
+      // Load sightings map to report page
+      $('#map-button').click(function(){
+        console.log('clicked');
+        app.displaySightings(); 
+      });
+    </script>
+  </body>
+</html>

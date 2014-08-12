@@ -1,0 +1,60 @@
+/* Header */
+
+#site-header{
+  height: 60px;
+  background-color: #3983CC;
+  font-size: 24px;
+}
+
+#site-header img{
+  height: 45px;
+  padding-top: 5px;
+}
+
+/* Content */
+
+#site-content{
+  background-color: #F9F9F9;
+  font-size: 14px;
+  text-align: center;
+}
+
+#home #site-content img{
+  height: 200px;
+}
+
+#report #site-content img{
+  width: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Footer */
+
+#site-footer{
+  height: 35px;
+  background-color: #3983CC;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Misc styles */
+
+#spotted-alert{
+  background-color: #FFF9CE;
+}
+
+#new-sighting-button{
+  background-color: #3983CC;
+  font-size: 16px;
+}
+
+#map-button{
+  background-color: #3983CC;
+  font-size: 16px;
+}
+
+#report-button{
+  background-color: #3983CC;
+  font-size: 16px;
+}
