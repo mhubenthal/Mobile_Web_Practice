@@ -25,8 +25,29 @@
 
 #report #site-content img{
   width: 50px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 65px;
+}
+
+#sightings-map{
+  width: 100%;
+  height: 300px;
+}
+
+#user-location-map{
+  width: 50%;
+  float: left;
+  display: inline;
+}
+
+#report #user-location-map img{
+  width: 200px;
+  height: 200px;
+}
+
+#user-location-info{
+  width: 50%;
+  float: left;
+  display: inline;
 }
 
 /* Footer */
@@ -40,8 +61,31 @@
 
 /* Misc styles */
 
-#spotted-alert{
+#sighting-alert-show{
   background-color: #FFF9CE;
+  position: absolute;
+  z-index: 101;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 2.5;
+  overflow: hidden;
+  transition: all 1s ease;
+}
+
+#sighting-alert-hide{
+  background-color: #FFF9CE;
+  position: absolute;
+  z-index: 101;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 2.5;
+  overflow: hidden;
+  transition: all 1s ease;
+  transform:translateY(-62px);
 }
 
 #new-sighting-button{

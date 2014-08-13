@@ -9,9 +9,19 @@
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.mobile-1.4.3.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
   </head>
   <body>
+    <!-- Facebook sharer -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
 
     <!-- START of HOME page -->
     <div data-role="page" id="home">
@@ -37,13 +47,16 @@
       <!-- Page Header -->
       <div id="site-header" data-role="header">
         <a data-role="none" href="#home"><img src="img/logo-captech.png"/></a>
+        <div id="sighting-alert-hide">Sighting reported!</div>
       </div>
       <!-- Body Content -->
       <div id="site-content" data-role="content" >
         <a href="#home">&lt;&lt; Back</a><br>
-        <p>Report Sighting<br>Your Location<br><a href="#report">Refresh</a></p>
+        <p>Report Sighting<p>
+        <div id="user-location-map"></div>
+        <div id="user-location-info">Your Location:<br><br><span id="user-address">Loading...</span><br><a id="refresh-map" href="#report">Refresh</a></p></div><br><br>
         <button id="new-sighting-button" data-role="button" >Report Sighting</button>
-        <img src="img/twitter.gif"/><img src="img/facebook.jpg"/>
+        <a href="https://twitter.com/intent/tweet?text=I%20just%20spotted%20Slaughter%20on%20SlaughterSpottr!"><img src="img/twitter.gif"/></a><div class="fb-share-button" data-href="http://www.slaughterspottr.com" data-type="box_count" data-width="600px"></div>
       </div>
       <!-- Page Footer -->
       <div id="site-footer" data-role="footer">
@@ -73,14 +86,27 @@
     
     <!-- Call Javascript functions -->
     <script type="text/javascript"> 
-      // Load sightings data if user chooses map page
+      // Load total sightings count to home page
+      $.getJSON('http://slaughterspottr.herokuapp.com/api/count',function(data){
+        $('#spot-count').replaceWith('<span id=\'spot-count\'>'+data.count+'</span>');
+      });
+      
+      // Load user location data to results page
+      app.locateMe();
+      // Refresh user location if requested
+      $('#refresh-map').click(function(){
+        app.locateMe();
+      });
+      
+      // User has reported a new sighting
+      $('#new-sighting-button').click(function(){
+        app.reportSighting();
+      });
+      
+      // Pre-load sightings data to map page
       $.getJSON('http://slaughterspottr.herokuapp.com/api/list',function(data){
         app.loadData(data);
-      });
-      // Load sightings map to report page
-      $('#map-button').click(function(){
-        console.log('clicked');
-        app.displaySightings(); 
+        app.displaySightings();
       });
     </script>
   </body>
