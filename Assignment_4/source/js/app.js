@@ -60,6 +60,13 @@
     showAlert(timer);
   }
   
+  // Update the sightings count on the home page
+  function updateCount(){
+    $.getJSON('http://slaughterspottr.herokuapp.com/api/count',function(data){
+        $('#spot-count').replaceWith('<span id=\'spot-count\'>'+data.count+'</span>');
+      });
+  }
+  
   // ***********************
   //
   // APP PUBLIC METHODS
@@ -134,6 +141,7 @@
     function success(result){
       // Show 2 second alert indicating successful PUT
       sightingAlert();
+      updateCount();
     }
   };
 

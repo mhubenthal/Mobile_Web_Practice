@@ -11,6 +11,11 @@
   padding-top: 5px;
 }
 
+#site-header a{
+  margin-left: 34%;
+  margin-right: 34%;
+}
+
 /* Content */
 
 #site-content{
@@ -23,9 +28,16 @@
   height: 200px;
 }
 
-#report #site-content img{
+#social{
+  text-align: center;
+}
+
+#twitter #facebook{
+  display: inline;
+}
+
+#twitter img{
   width: 50px;
-  padding-right: 65px;
 }
 
 #sightings-map{
@@ -40,8 +52,8 @@
 }
 
 #report #user-location-map img{
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  
 }
 
 #user-location-info{
@@ -71,7 +83,7 @@
   text-align: center;
   line-height: 2.5;
   overflow: hidden;
-  transition: all 1s ease;
+  -webkit-transition: all 1s ease;
 }
 
 #sighting-alert-hide{
@@ -84,8 +96,8 @@
   text-align: center;
   line-height: 2.5;
   overflow: hidden;
-  transition: all 1s ease;
-  transform:translateY(-62px);
+  -webkit-transition: all 1s ease;
+  -webkit-transform:translateY(-62px);
 }
 
 #new-sighting-button{
