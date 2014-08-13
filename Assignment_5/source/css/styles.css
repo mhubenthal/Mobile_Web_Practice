@@ -1,0 +1,104 @@
+/* Header */
+
+#site-header{
+  height: 60px;
+  background-color: #3983CC;
+  font-size: 24px;
+}
+
+#site-header a{
+  
+}
+
+/* Content */
+
+div #title-screen{
+  width: 100%;
+  height: 240px;
+  border: 2px solid #a1a1a1;
+  background: #dddddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#cap-logo{
+  width: 35%;
+  margin-top: 3%;
+  margin-left: 3%;
+  display: inline;
+  float: left;
+}
+
+#emp-photo{
+  margin-left: 30%;
+  width: 70%;
+  display: inline;
+  float: left;
+}
+
+#game-title{
+  display: inline;
+  float: left;
+}
+
+#site-content{
+  background-color: #F9F9F9;
+  font-size: 14px;
+}
+
+div #game-image{
+  width: 100%;
+  height: 300px;
+  border: 2px solid #a1a1a1;
+  background: #dddddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Footer */
+
+#site-footer{
+  height: 35px;
+  background-color: #3983CC;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Misc styles */
+
+#sighting-alert-show{
+  background-color: #FFF9CE;
+  position: absolute;
+  z-index: 101;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 2.5;
+  overflow: hidden;
+  -webkit-transition: all 1s ease;
+}
+
+#sighting-alert-hide{
+  background-color: #FFF9CE;
+  position: absolute;
+  z-index: 101;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 2.5;
+  overflow: hidden;
+  -webkit-transition: all 1s ease;
+  -webkit-transform:translateY(-62px);
+}
+
+#play-button{
+  background-color: #3983CC;
+  font-size: 16px;
+}
+
+#settings-button{
+  background-color: #3983CC;
+  font-size: 16px;
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html class="ui-mobile">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile Tech Challenge #5 -- CapMatchr</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.3.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/jquery.mobile-1.4.3.min.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+  </head>
+  <body>
+
+    <!-- START of HOME page -->
+    <div data-role="page" id="home">
+      <!-- No Header -->
+      <!-- Body Content -->
+      <div id="site-content" data-role="content">
+        <div id="title-screen">
+          <img id="cap-logo" src="img/logo-captech.png"/>
+          <img id="emp-photo" src="img/home.png"/>
+          <h2 id="game-title">CapMatchr&trade;</h2>
+        </div>
+        <a href="#play" id="play-button" data-role="button" >PLAY</a>
+        <a href="#settings" id="settings-button" class="site-button" data-role="button" >SETTINGS</a>
+      </div>
+      <!-- Page Footer -->
+      <div id="site-footer" data-role="footer">
+        <p>&copy;2013 CapTech Consulting</p>
+      </div>
+    </div>
+    <!-- END of HOME page -->
+
+    <!-- START of PLAY page -->
+    <div data-role="page" id="play">
+      <!-- Page Header -->
+      <div id="site-header" data-role="header">
+        <h1>Round <span id="currentRound">0</span> of 10</h1>
+      </div>
+      <!-- Body Content -->
+      <div id="site-content" data-role="content" >
+        <div id="game-image">
+          <img src="img/home.png"/>
+        </div>
+        <button id="choice1" data-role="button" >name</button>
+        <button id="choice2" data-role="button" >name</button>
+        <button id="choice3" data-role="button" >name</button>
+      </div>
+    </div>
+    <!-- END of PLAY page -->
+
+    <!-- START of RESULTS page -->
+    <div data-role="page" id="results">
+      <!-- Page Header -->
+      <div id="site-header" data-role="header">
+        <a href="#home" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-home">Home</a>
+        <h1>Results</h1>
+      </div>
+      <!-- Body Content -->
+      <div id="site-content" data-role="content" >
+        <h2><span id="numCorrect">0</span> of 10 Correct</h2>
+        <a href="#play" id="play-button" data-role="button" >New Game</a>
+      </div>
+    </div>
+    <!-- END of RESULTS page -->
+  
+    <!-- START of SETTINGS page -->
+    <div data-role="page" id="settings">
+      <!-- Page Header -->
+      <div id="site-header" data-role="header">
+        <a href="#home" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-home">Home</a>
+        <h1>Settings</h1>
+      </div>
+      <!-- Body Content -->
+      <div id="site-content" data-role="content" >
+        <h2>Only show employees from:</h2>
+        <hr>
+        <p>Office location:</p>
+        <select name="select-location" id="select-location">
+        </select>
+        <p>Practice Area:</p>
+        <select name="select-practice" id="select-practice">
+        </select>
+      </div>
+    </div>
+    <!-- END of SETTINGS page -->
+    
+    <!-- Call Javascript functions -->
+    <script type="text/javascript"> 
+      // Load total sightings count to home page
+      $.getJSON('http://slaughterspottr.herokuapp.com/api/count',function(data){
+        $('#spot-count').replaceWith('<span id=\'spot-count\'>'+data.count+'</span>');
+      });
+      
+      // Load user location data to results page
+      app.locateMe();
+      // Refresh user location if requested
+      $('#refresh-map').click(function(){
+        app.locateMe();
+      });
+      
+      // User has reported a new sighting
+      $('#new-sighting-button').click(function(){
+        app.reportSighting();
+      });
+      
+      // Pre-load sightings data to map page
+      $.getJSON('http://slaughterspottr.herokuapp.com/api/list',function(data){
+        app.loadData(data);
+        app.displaySightings();
+      });
+    </script>
+  </body>
+</html>
