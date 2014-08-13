@@ -1,6 +1,12 @@
 Max Hubenthal
-, August , 2014
+Wednesday, August 13th, 2014
 
 Assignment #4 TODOs:
 
 1. Fix initial loading of total sightings map, which requires a refresh to render to full size (something to do with the jQuery Mobile hides each 'page').
+
+2. Center top logo in a non-hacky way.
+
+3. Figure out how to make bottom social icons inline.
+
+4. Make sure that footer always sits at bottom of page.
