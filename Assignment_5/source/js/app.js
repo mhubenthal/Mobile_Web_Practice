@@ -4,67 +4,63 @@
 (function(window){
   // Database object  
   var app = {};
+  app.settings = [];
   
   // Holds array of past sightings
-  app.sightings = [];
+  app.empData = [];
   
-  // Holds array of user's current location -- lat, long
-  app.userLocation = [];
-  
-  // Create Google map objects
-  function loadMap(){
-  // Create map object
-    var testLatLong = new google.maps.LatLng(33,50);
-    var map = new google.maps.Map(document.getElementById('sightings-map'),{
-      zoom: 12,
-    });
-
-    // Add markers and infowindows to map
-    var infowindow = new google.maps.InfoWindow();
-    var marker;
-    var markerArray = [];
-    for(var i=0;i<app.sightings.length;i++){
-      // Add markers
-      marker = new google.maps.Marker({
-        position: new google.maps.LatLng(app.sightings[i][1],app.sightings[i][2]),
-        map: map
-      });
-      markerArray.push(marker);
-      // Add infowindows
-      google.maps.event.addListener(marker,'click',(function(marker,i){
-        return function(){
-          infowindow.setContent(app.sightings[i][0]);
-          infowindow.open(map,marker);
-        };
-      })(marker,i));
+  // Check if data is present in localStorage, add if not
+  function checkLocalStorage(){
+    var result = false;
+    // User has been here before, look at localStorage
+    if(localStorage.getItem('empData')){
+      // Create/load settings, game and results objects
+      var settings = {};
+      app.settings[0] = $("#select-location").val();
+      app.settings[1] = $("#select-practice").val();
+      result = true;
     }
-
-    // Center map on all markers
-    var limits = new google.maps.LatLngBounds();
-    $.each(markerArray,function(index,newMarker){
-      limits.extend(newMarker.position);
-    });
-    map.fitBounds(limits);
+    // New data, set up localStorage
+    if(localStorage && !localStorage.getItem('empData')){
+      // Set up new user with some preloaded values
+      //   for this first visit.
+      var empData = app.empData;
+      localStorage.setItem('empData', JSON.stringify(empData));
+      // Create/load settings, game and results objects
+      app.settings[0] = $("#select-location").val();
+      app.settings[1] = $("#select-practice").val();
+      result = true;
+    }
+    return result;
   }
   
-  // 3 second alert message
-  function sightingAlert(){
-    function timer(){window.setTimeout(hideAlert, 3000)}
-    function showAlert(timer){
-      $('#sighting-alert-hide').attr('id','sighting-alert-show');
-      timer();
-    }
-    function hideAlert(){
-      $('#sighting-alert-show').attr('id','sighting-alert-hide')
-    }
-    showAlert(timer);
+  // Update game settings
+  function updateSettings(newLocation,newPractice){
+    var settings = JSON.parse(localStorage.getItem('settings'));
+    settings.location = app.settings[0] = newLocation;
+    settings.practice = app.settings[1] = newPractice;
+    localStorage.setItem('settings', JSON.stringify(settings));
   }
   
-  // Update the sightings count on the home page
-  function updateCount(){
-    $.getJSON('http://slaughterspottr.herokuapp.com/api/count',function(data){
-        $('#spot-count').replaceWith('<span id=\'spot-count\'>'+data.count+'</span>');
-      });
+  // Load a new game of ten rounds
+  function loadGame(){
+    // Get employee data
+    var allEmp = JSON.parse(localStorage.getItem('empData'));
+    // Get all employees based on settings
+    var selectEmp = [];
+    for(var i=0;i<allEmp.length;i++){
+      if(allEmp[i].Location===app.settings[0]&&allEmp[i].PracticeArea===app.settings[1]){
+        selectEmp.push(allEmp[i]);
+      }
+      else{}
+    }
+    $(selectEmp).each(function(i){
+      console.log(selectEmp[i].Location + ' ' +selectEmp[i].PracticeArea);
+    });
+    var game = {};
+    game.rounds = [];
+    game.results = [];
+    localStorage.setItem('game', JSON.stringify(game));
   }
   
   // ***********************
@@ -76,73 +72,23 @@
   // Parse and load data into sightings array
   app.loadData = function(newData){
     // Create array of sightings to load
-    for(var i=0;i<newData.length;i++){
-      app.sightings.push([newData[i].date,newData[i].lat,newData[i].lon]);
+    app.empData = newData;
+    // Add employee data to localStorage if not present
+    var success = checkLocalStorage();
+    // Output an alert to the user
+    if(!success){
+      alert('Your browser does not support localStorage, this game will not work, sorry!');
     }
-  };
-
-  // Display all sightings on map
-  app.displaySightings = function(){
-    // Clear old map
-    $('#sightings-map').replaceWith('<div id=\'sightings-map\'></div>');
-
-    // Create Google map
-    loadMap();
-  };
-
-  // Locate the user's current location
-  app.locateMe = function(){
-    var output = document.getElementById("user-location-map");
-    if (!navigator.geolocation){
-      output.innerHTML = 'Geolocation is not supported by your browser!';
-      return;
-    }
-    function success(position){
-      var latitude = app.userLocation[0] = position.coords.latitude;
-      var longitude = app.userLocation[1] = position.coords.longitude;
-      
-      // Create new static Google map
-      var img = new Image();
-      img.src = 'http://maps.googleapis.com/maps/api/staticmap?center='+latitude+','+longitude+'&zoom=13&size=200x200&markers=color:red%7Clabel:%7C'+latitude+','+longitude+'&sensor=false';
-      output.innerHTML = '';
-      output.appendChild(img);
-      
-      // Get human-readable address from Google
-      $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude,function(data){
-        var address = data.results[0].formatted_address;
-        address = address.split(',');
-        var formattedAddress = address[0]+'<br>';
-        for(var i=1;i<address.length;i++){
-          formattedAddress = formattedAddress+address[i]+'<br>';
-        }
-        $('#user-address').replaceWith('<span id=\'user-address\'>'+formattedAddress+'</span>');
-      });
-    };
-    function error() {
-      output.innerHTML = 'Geolocation is required for SlaughterSpottr!';
-    };
-    output.innerHTML = 'Locating…';
-    navigator.geolocation.getCurrentPosition(success, error);
   };
   
-  // Post a new sighting
-  app.reportSighting = function(){
-    var newLocation = app.userLocation[0]+','+app.userLocation[1];
-    $.ajax({
-      type: 'PUT',
-      url: 'http://slaughterspottr.herokuapp.com/api/add?location='+newLocation,
-      success: success,
-      error: error,
-      dataType: 'text'
-    });
-    function error(result){
-      alert('Error posting sighting, try again!');
-    }
-    function success(result){
-      // Show 2 second alert indicating successful PUT
-      sightingAlert();
-      updateCount();
-    }
+  // Update Settings
+  app.updateSettings = function(location,practice){
+    updateSettings(location,practice);
+  };
+  
+  // Load a game
+  app.loadGame = function(){
+    loadGame();
   };
 
   // Register the app object on the window.

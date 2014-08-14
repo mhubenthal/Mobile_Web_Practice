@@ -22,23 +22,31 @@ div #title-screen{
 }
 
 #cap-logo{
-  width: 35%;
-  margin-top: 3%;
-  margin-left: 3%;
+  width: 40%;
+  margin-top: 5%;
+  margin-left: 45%;
   display: inline;
   float: left;
+  z-index: 10;
+  position: absolute;
 }
 
 #emp-photo{
-  margin-left: 30%;
-  width: 70%;
+  margin-left: 3%;
+  margin-top: 60px;
+  margin-bottom: 0px;
+  width: 200px;
   display: inline;
   float: left;
 }
 
 #game-title{
+  margin-top: 200px;
+  margin-left: 0%;
   display: inline;
   float: left;
+  z-index: 3;
+  position: absolute;
 }
 
 #site-content{
@@ -101,4 +109,25 @@ div #game-image{
 #settings-button{
   background-color: #3983CC;
   font-size: 16px;
+}
+
+#default-button{
+  font-family: 'Roboto condensed', sans-serif;
+  color: #333333;
+  border: 1px solid #CCCCCC;
+  background: linear-gradient(#FFFFFF,#CCCCCC);
+}
+
+#correct-button{
+  font-family: 'Roboto condensed', sans-serif;
+  color: #FFFFFF;
+  border: 1px solid #77AF0F;
+  background: linear-gradient(#B2DB64,#7EBC0A,#77AF0F);
+}
+
+#incorrect-button{
+  font-family: 'Roboto condensed', sans-serif;
+  color: #FFFFFF;
+  border: 1px solid #AD1B1B;
+  background: linear-gradient(#E45050,#D52020,#AD1B1B);
 }

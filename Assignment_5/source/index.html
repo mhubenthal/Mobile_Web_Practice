@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mobile Tech Challenge #5 -- CapMatchr</title>
     <link rel="stylesheet" href="css/jquery.mobile-1.4.3.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.mobile-1.4.3.min.js"></script>
@@ -43,9 +44,9 @@
         <div id="game-image">
           <img src="img/home.png"/>
         </div>
-        <button id="choice1" data-role="button" >name</button>
-        <button id="choice2" data-role="button" >name</button>
-        <button id="choice3" data-role="button" >name</button>
+        <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
+        <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
+        <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
       </div>
     </div>
     <!-- END of PLAY page -->
@@ -59,7 +60,7 @@
       </div>
       <!-- Body Content -->
       <div id="site-content" data-role="content" >
-        <h2><span id="numCorrect">0</span> of 10 Correct</h2>
+        <h2><span id="num-correct">0</span> of 10 Correct</h2>
         <a href="#play" id="play-button" data-role="button" >New Game</a>
       </div>
     </div>
@@ -76,11 +77,18 @@
       <div id="site-content" data-role="content" >
         <h2>Only show employees from:</h2>
         <hr>
-        <p>Office location:</p>
+        <p>Office:</p>
         <select name="select-location" id="select-location">
+          <option>Richmond</option>
+          <option>Charlotte</option>
+          <option>DC</option>
+          <option>Philadelphia</option>
         </select>
         <p>Practice Area:</p>
         <select name="select-practice" id="select-practice">
+          <option>SI</option>
+          <option>DMBI</option>
+          <option>MC</option>
         </select>
       </div>
     </div>
@@ -88,27 +96,27 @@
     
     <!-- Call Javascript functions -->
     <script type="text/javascript"> 
-      // Load total sightings count to home page
-      $.getJSON('http://slaughterspottr.herokuapp.com/api/count',function(data){
-        $('#spot-count').replaceWith('<span id=\'spot-count\'>'+data.count+'</span>');
-      });
-      
-      // Load user location data to results page
-      app.locateMe();
-      // Refresh user location if requested
-      $('#refresh-map').click(function(){
-        app.locateMe();
-      });
-      
-      // User has reported a new sighting
-      $('#new-sighting-button').click(function(){
-        app.reportSighting();
-      });
-      
-      // Pre-load sightings data to map page
-      $.getJSON('http://slaughterspottr.herokuapp.com/api/list',function(data){
+      // Load game data into localStorage.
+      // Note: if the database grows to include ALL employees, this may be an impractical approace
+      $.getJSON('http://capmatchr.herokuapp.com/api/list',function(data){
         app.loadData(data);
-        app.displaySightings();
+      });
+      
+      // User chooses to play a game
+      $("#play-button").click(function(){
+        app.loadGame();
+      });
+      
+      // Listen for new settings, update stored settings
+      $("#select-location").change(function(){
+        var newLocation = $("#select-location").val();
+        var practice = $("#select-practice").val();
+        app.updateSettings(newLocation,practice);
+      });
+      $("#select-practice").change(function(){
+        var newPractice = $("#select-practice").val();
+        var location = $("#select-location").val();
+        app.updateSettings(location,newPractice);
       });
     </script>
   </body>
