@@ -45,8 +45,8 @@
           <img src="img/home.png"/>
         </div>
         <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
-        <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
-        <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
+        <span id="middle-button"><button id="default-button" data-role="button" >no data received</button></span>
+        <span id="bottom-button"><button id="default-button" data-role="button" >no data received</button></span>
       </div>
     </div>
     <!-- END of PLAY page -->
@@ -109,14 +109,12 @@
       
       // Listen for new settings, update stored settings
       $("#select-location").change(function(){
-        var newLocation = $("#select-location").val();
-        var practice = $("#select-practice").val();
-        app.updateSettings(newLocation,practice);
+        app.settings[0] = $("#select-location").val();
+        app.settings[1] = $("#select-practice").val();
       });
       $("#select-practice").change(function(){
-        var newPractice = $("#select-practice").val();
-        var location = $("#select-location").val();
-        app.updateSettings(location,newPractice);
+        app.settings[0] = $("#select-location").val();
+        app.settings[1] = $("#select-practice").val();
       });
     </script>
   </body>
