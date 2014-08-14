@@ -37,16 +37,18 @@
     <div data-role="page" id="play">
       <!-- Page Header -->
       <div id="site-header" data-role="header">
-        <h1>Round <span id="currentRound">0</span> of 10</h1>
+        <h1>Round <span id="current-round">0</span> of 10</h1>
       </div>
       <!-- Body Content -->
       <div id="site-content" data-role="content" >
         <div id="game-image">
           <img src="img/home.png"/>
         </div>
-        <span id="top-button"><button id="default-button" data-role="button" >no data received</button></span>
-        <span id="middle-button"><button id="default-button" data-role="button" >no data received</button></span>
-        <span id="bottom-button"><button id="default-button" data-role="button" >no data received</button></span>
+        <div id="game-buttons">
+          <button id="default-button" data-role="button" >no data received</button>
+          <button id="default-button" data-role="button" >no data received</button>
+          <button id="default-button" data-role="button" >no data received</button>
+        </div>
       </div>
     </div>
     <!-- END of PLAY page -->
@@ -55,13 +57,20 @@
     <div data-role="page" id="results">
       <!-- Page Header -->
       <div id="site-header" data-role="header">
-        <a href="#home" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-home">Home</a>
-        <h1>Results</h1>
+        <div id="results-header">
+          <a href="#home" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-home">Home</a>
+          <h1>Results</h1>
+        </div>
       </div>
       <!-- Body Content -->
       <div id="site-content" data-role="content" >
-        <h2><span id="num-correct">0</span> of 10 Correct</h2>
-        <a href="#play" id="play-button" data-role="button" >New Game</a>
+        <div id="results-content">
+          <h1><span id="num-correct">0</span> of 10 Correct</h1>
+          <a href="#play" id="new-game-button" data-role="button" >New Game</a>
+          <hr>
+        </div>
+        <table id="results-table">
+        </table>
       </div>
     </div>
     <!-- END of RESULTS page -->
@@ -104,6 +113,11 @@
       
       // User chooses to play a game
       $("#play-button").click(function(){
+        app.loadGame();
+      });
+      
+      // User chooses to play another game
+      $("#new-game-button").click(function(){
         app.loadGame();
       });
       

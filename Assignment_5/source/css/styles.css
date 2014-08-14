@@ -6,8 +6,15 @@
   font-size: 24px;
 }
 
-#site-header a{
-  
+#results-header{
+  height: 60px;
+  background-color: #3983CC;
+  font-size: 18px;
+  line-height: 18px;
+  text-align: center;
+  z-index: 20;
+  position: fixed;
+  width: 100%;
 }
 
 /* Content */
@@ -54,6 +61,16 @@ div #title-screen{
   font-size: 14px;
 }
 
+#site-content h1{
+  text-align: center;
+}
+
+#results-content{
+  z-index: 20;
+  position: fixed;
+  width: 95%;
+}
+  
 div #game-image{
   width: 100%;
   height: 300px;
@@ -112,22 +129,49 @@ div #game-image{
 }
 
 #default-button{
+  width: 100%;
   font-family: 'Roboto condensed', sans-serif;
   color: #333333;
+  height: 50px;
+  margin: 3px;
   border: 1px solid #CCCCCC;
+  border-radius: 5px;
   background: linear-gradient(#FFFFFF,#CCCCCC);
 }
 
 #correct-button{
+  width: 100%;
   font-family: 'Roboto condensed', sans-serif;
   color: #FFFFFF;
+  height: 50px;
+  margin: 3px;
   border: 1px solid #77AF0F;
+  border-radius: 5px;
   background: linear-gradient(#B2DB64,#7EBC0A,#77AF0F);
 }
 
 #incorrect-button{
+  width: 100%;
   font-family: 'Roboto condensed', sans-serif;
   color: #FFFFFF;
+  height: 50px;
+  margin: 3px;
   border: 1px solid #AD1B1B;
+  border-radius: 5px;
   background: linear-gradient(#E45050,#D52020,#AD1B1B);
+}
+
+table,th,td{
+  border:1px solid black;
+  border-collapse:collapse;
+}
+
+td{
+  text-align: center;
+  width: 32%;
+}
+
+table{
+  margin-top: 126px;
+  width: 100%;
 }

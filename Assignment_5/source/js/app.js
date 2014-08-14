@@ -5,7 +5,9 @@
   // App object  
   var app = {};
   app.settings = [];
-  app.gameResults = [];
+  app.gameResults = {};
+  app.gameResults.numCorrect = 0;
+  app.gameResults.guessedNames = [];
   // Holds array of employee data
   app.empData = [];
   
@@ -84,49 +86,70 @@
       game.rounds[i] = order.splice(randomVal,1)[0];
     }
     // Start game
-    callback(game);
+    callback(0,game);
   }
   
   // Play game
-  function playGame(newGame){
-    var done = false;
-    var i = 0;
-    // Set the buttons to new values
-    function setButtons(i){
+  function playGame(index,newGame){
+    var i = index;
+    
+    // Base case, game is over
+    if(i>9){
+      showResults();
+    }
+    // Game is still going
+    if(i<=9){
       // Set button values
-      $('#top-button').html('<button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[0]]+'</button>');
-      $('#middle-button').html('<button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[1]]+'</button>');
-      $('#bottom-button').html('<button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[2]]+'</button>');
-    }
-    
-    // Game loop
-    var done = false;
-    while(!done){
-        
-    }
-    
-      
-      // Wait for user to choose a value
-      $('button').click(function(){
+      $('#current-round').text(i+1);
+      $('#game-buttons').html('<button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[0]]+'</button><button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[1]]+'</button><button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[2]]+'</button>');
+
+      // Listen for selection, then recursive game loop
+      $('button').on('click',function(){
         var choice = $(this).text();
         var correct = newGame.selectEmp[newGame.rounds[i]].FirstName + ' ' + newGame.selectEmp[newGame.rounds[i]].LastName;
         // Correct choice
         if(correct===choice){
+          // Update game results
+          app.gameResults.guessedNames[i] = {'choice':choice,'answer':true};
+          app.gameResults.numCorrect++;
           $(this).attr('id', 'correct-button');
-          //wait 2 seconds
-          i++;
+          $('button').off('click');
+          i += 1;
+          // Wait 2 seconds before next round
+          //window.setTimeout(function(){playGame(i,newGame)},2000);
+          playGame(i,newGame);
         }
         // Incorrect choice
         if(correct!==choice){
+          // Update game results
+          app.gameResults.guessedNames[i] = {'choice':choice,'answer':false};
+          app.gameResults.numCorrect++;
           $(this).attr('id', 'incorrect-button');
-          //wait 2 seconds
-          i++;
+          //highlight correct button
+          $('button').off('click');
+          i += 1;
+          // Wait 2 seconds before next round
+          //window.setTimeout(function(){playGame(i,newGame)},2000);
+          playGame(i,newGame);
         }
       });
-      // Exit loop after 10 rounds
-      if(i===9){
-        done=true;
-      }
+    }
+  }
+  
+  // Display game results
+  function showResults(){
+    // Navigate to results page
+    $.mobile.navigate('#results');
+    // Clear old results
+    $('#results-table').replaceWith('<table id=\'results-table\'></table>');
+    $('#num-correct').text(app.gameResults.numCorrect);
+    // Display results table
+    $.each(app.gameResults.guessedNames, function(index,value){
+      $("#results-table").append("<tr><td>PICTURE</td><td>"+app.gameResults.guessedNames[index].choice+"</td><td>"+app.gameResults.guessedNames[index].answer+"</td></tr>");
+    });
+    // Clear game results
+    app.gameResults.guessedNames = [];
+    app.gameResults.numCorrect = 0; 
   }
   
   // ***********************
