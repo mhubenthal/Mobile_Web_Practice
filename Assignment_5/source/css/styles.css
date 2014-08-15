@@ -3,13 +3,13 @@
 #site-header{
   height: 60px;
   background-color: #3983CC;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 #results-header{
   height: 60px;
   background-color: #3983CC;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 18px;
   text-align: center;
   z-index: 20;
