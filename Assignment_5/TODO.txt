@@ -1,8 +1,10 @@
 Max Hubenthal
-, August , 2014
+Monday, August 18th, 2014
 
 Assignment #5 TODOs:
 
 1. Figure out how to include two practice areas: 'OP' and 'UN'.
 
-2. There are not enough employees from each combination of location/practice area for a full 10 rounds. Any amount less than 10 within particular constraints will be padded by selecting from ANY constraints.
+2. There are not enough employees from each combination of location/practice area for a full 10 rounds. Any amount less than 10 within particular constraints will be padded by selecting with ANY constraints.
+
+3. Format game image for current question better. (Higher resolution image?)

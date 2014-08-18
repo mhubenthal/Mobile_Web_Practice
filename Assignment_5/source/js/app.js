@@ -95,49 +95,59 @@
     
     // Base case, game is over
     if(i>9){
-      showResults();
+      showResults(newGame);
     }
     // Game is still going
     if(i<=9){
+      // Set employee image
+      $('#game-image').html('<img alt=\'Embedded Image\' src=\'data:image/png;base64,'+newGame.selectEmp[newGame.rounds[i]].Picture+'\' />');
       // Set button values
       $('#current-round').text(i+1);
-      $('#game-buttons').html('<button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[0]]+'</button><button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[1]]+'</button><button id=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[2]]+'</button>');
+      $('#game-buttons').html('<button id=\'0\' class=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[0]]+'</button><button id=\'1\' class=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[1]]+'</button><button id=\'2\' class=\"default-button\" data-role=\"button\" >'+newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[2]]+'</button>');
 
       // Listen for selection, then recursive game loop
       $('button').on('click',function(){
         var choice = $(this).text();
         var correct = newGame.selectEmp[newGame.rounds[i]].FirstName + ' ' + newGame.selectEmp[newGame.rounds[i]].LastName;
+        // Find index of correct name
+        var ansId;
+        for(var n=0;n<3;n++){
+          if(newGame.selectEmp[newGame.rounds[i]].nameChoices[newGame.selectEmp[newGame.rounds[i]].answerOrder[n]]===correct){
+            ansId='#'+n.toString();
+          }
+        }
         // Correct choice
         if(correct===choice){
           // Update game results
           app.gameResults.guessedNames[i] = {'choice':choice,'answer':true};
           app.gameResults.numCorrect++;
-          $(this).attr('id', 'correct-button');
+          $(this).attr('class', 'correct-button');
           $('button').off('click');
           i += 1;
           // Wait 2 seconds before next round
-          //window.setTimeout(function(){playGame(i,newGame)},2000);
-          playGame(i,newGame);
+          window.setTimeout(function(){playGame(i,newGame)},2000);
+          //playGame(i,newGame);
         }
         // Incorrect choice
         if(correct!==choice){
           // Update game results
           app.gameResults.guessedNames[i] = {'choice':choice,'answer':false};
           app.gameResults.numCorrect++;
-          $(this).attr('id', 'incorrect-button');
-          //highlight correct button
+          $(this).attr('class', 'incorrect-button');
+          // Highlight correct button
+          $(ansId).attr('class', 'correct-button');
           $('button').off('click');
           i += 1;
           // Wait 2 seconds before next round
-          //window.setTimeout(function(){playGame(i,newGame)},2000);
-          playGame(i,newGame);
+          window.setTimeout(function(){playGame(i,newGame)},2000);
+          //playGame(i,newGame);
         }
       });
     }
   }
   
   // Display game results
-  function showResults(){
+  function showResults(newGame){
     // Navigate to results page
     $.mobile.navigate('#results');
     // Clear old results
@@ -145,7 +155,18 @@
     $('#num-correct').text(app.gameResults.numCorrect);
     // Display results table
     $.each(app.gameResults.guessedNames, function(index,value){
-      $("#results-table").append("<tr><td>PICTURE</td><td>"+app.gameResults.guessedNames[index].choice+"</td><td>"+app.gameResults.guessedNames[index].answer+"</td></tr>");
+      // Choose the appropriate icon
+      var ansIcon = '';
+      var ansColor = '';
+      if(app.gameResults.guessedNames[index].answer){
+        ansIcon = 'check';
+        ansColor = 'green';
+      }
+      else{
+        ansIcon = 'times';
+        ansColor = 'red';
+      }
+      $('#results-table').append('<tr><td><img alt=\'Embedded Image\' src=\'data:image/png;base64,'+newGame.selectEmp[newGame.rounds[index]].Picture+'\' /></td><td>'+newGame.selectEmp[newGame.rounds[index]].FirstName + ' ' + newGame.selectEmp[newGame.rounds[index]].LastName+'</td><td><span style=\'color: '+ansColor+'\'class=\'fa fa-'+ansIcon+' fa-2x\'></span></td></tr>');
     });
     // Clear game results
     app.gameResults.guessedNames = [];
